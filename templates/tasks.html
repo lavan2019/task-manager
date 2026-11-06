@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Task Manager</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.css" integrity="sha512-x9WwyMYBnlXMNQ6kQ/Lyzu1NqIhLQKL5Oq6xByfXuRj7s9CskyCbLv/1IjqzJmXwFXWr0ov6jBV7Qbc0hh9nHg==" crossorigin="anonymous" referrerpolicy="no-referrer">
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', path='style.css') }}">
+</head>
+<body>
+
+    <header class="hero">
+        <div>
+            <p class="eyebrow">STAY FOCUSED</p>
+            <h1>My Task Manager</h1>
+            <p>Plan your work. Complete one task at a time.</p>
+        </div>
+
+        <img
+            src="{{ url_for('static', path='th.jpg') }}"
+            style="height: 80px; width: 80px;"
+            alt="Workspace with a notebook"
+            class="hero-image"
+        >
+    </header>
+
+    <main class="container">
+        <section class="add-panel">
+            <h2>Add a new task</h2>
+            <form action="/tasks" method="post">
+                <input type="text" name="title"
+                       placeholder="What do you need to do?" required>
+                <button type="submit">Add Task</button>
+            </form>
+        </section>
+
+        <section class="task-panel">
+            <h2>Your tasks</h2>
+
+            {% if tasks %}
+                <div class="task-list">
+                    {% for task in tasks %}
+                        <article class="task-card">
+                            <div>
+                                <h3 class="{% if task.completed %}completed{% endif %}">
+                                    {{ task.title }}
+                                </h3>
+                                <span>
+                                    {% if task.completed %}
+                                        Completed
+                                    {% else %}
+                                        Pending
+                                    {% endif %}
+                                </span>
+                            </div>
+
+                            <div class="task-actions">
+                                {% if not task.completed %}
+                                    <form action="/tasks/{{ task.id }}/complete"
+                                          method="post">
+                                        <button class="complete-button" type="submit">
+                                            Complete
+                                        </button>
+                                    </form>
+                                {% endif %}
+
+                                <form action="/tasks/{{ task.id }}/delete"
+                                      method="post">
+                                    <button class="delete-button" type="submit">
+                                        Delete
+                                    </button>
+                                </form>
+                            </div>
+                        </article>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="empty">No tasks yet. Add your first task above.</p>
+            {% endif %}
+        </section>
+    </main>
+</body>
+</html>
